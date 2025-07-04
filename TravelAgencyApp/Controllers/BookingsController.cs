@@ -6,7 +6,7 @@ using TravelAgencyApp.Services;
 
 namespace TravelAgencyApp.Controllers
 {
-    [Authorize]
+    [Authorize(Roles = "Admin,Worker")]
     public class BookingsController : Controller
     {
         private readonly BookingService _bookingService;
@@ -34,6 +34,7 @@ namespace TravelAgencyApp.Controllers
             return View(booking);
         }
 
+        [Authorize(Roles = "Admin, Worker")]
         public async Task<IActionResult> Create()
         {
             var trips = await _tripService.GetAllAsync();
@@ -47,6 +48,7 @@ namespace TravelAgencyApp.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin,Worker")]
         public async Task<IActionResult> Create(BookingDTO dto)
         {
             if (!ModelState.IsValid)
@@ -64,6 +66,7 @@ namespace TravelAgencyApp.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        [Authorize(Roles = "Admin,Worker")]
         public async Task<IActionResult> Edit(int id)
         {
             var booking = await _bookingService.GetByIdAsync(id);
@@ -80,6 +83,7 @@ namespace TravelAgencyApp.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin,Worker")]
         public async Task<IActionResult> Edit(int id, BookingDTO dto)
         {
             if (id != dto.BookingId) return NotFound();
@@ -99,6 +103,7 @@ namespace TravelAgencyApp.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        [Authorize(Roles = "Admin,Worker")]
         public async Task<IActionResult> Delete(int id)
         {
             var booking = await _bookingService.GetByIdAsync(id);
@@ -109,6 +114,7 @@ namespace TravelAgencyApp.Controllers
 
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin,Worker")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             await _bookingService.DeleteAsync(id);
