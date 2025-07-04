@@ -2,7 +2,27 @@
     ViewData["Title"] = "Home Page";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div class="text-center mt-4">
+    <h1 class="display-4">Welcome to TravelAgencyApp</h1>
+    <p class="lead">Plan and manage travel bookings with ease.</p>
+</div>
+
+<div class="alert alert-info mt-5">
+    <h4>🧭 How to Use This App</h4>
+    <ul class="text-start">
+        <li><strong>Register</strong> or use the default Admin credentials to log in.</li>
+        <li><strong>Trips:</strong> Browse available travel offers.</li>
+        <li><strong>Bookings:</strong> Create or manage reservations for trips.</li>
+        <li><strong>Customers:</strong> Admin can view and manage customer data.</li>
+    </ul>
+</div>
+
+<div class="alert alert-secondary mt-4">
+    <h5>🔐 Roles in the App</h5>
+    <ul class="text-start">
+        <li><strong>Admin:</strong> Full control (Trips, Bookings, Customers, Users)</li>
+        <li><strong>Worker:</strong> Can manage trips</li>
+        <li><strong>User:</strong> Can view trips and book</li>
+    </ul>
+    <p class="mb-0"><strong>Test Admin Login:</strong> <code>admin@admin.com / Admin123!</code></p>
 </div>
