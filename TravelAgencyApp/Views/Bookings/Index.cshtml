@@ -1,0 +1,45 @@
+﻿@model IEnumerable<TravelAgencyApp.DTOs.BookingDTO>
+
+@{
+    ViewData["Title"] = "Bookings";
+}
+
+<h1>Bookings</h1>
+
+<p>
+    <form asp-action="Create" method="get" style="display:inline;">
+        <button type="submit" class="btn btn-info">Create New</button>
+    </form>
+</p>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>@Html.DisplayNameFor(model => model.BookingDate)</th>
+            <th>Trip</th>
+            <th>Customer</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.BookingDate.ToString("yyyy-MM-dd")</td>
+                <td>@item.TripName</td>
+                <td>@item.CustomerName</td>
+                <td>
+                    <form asp-action="Edit" asp-route-id="@item.BookingId" method="get" style="display:inline;">
+                        <button type="submit" class="btn btn-warning">Edit</button>
+                    </form>
+                    <form asp-action="Details" asp-route-id="@item.BookingId" method="get" style="display:inline;">
+                        <button type="submit" class="btn btn-info">Details</button>
+                    </form>
+                    <form asp-action="Delete" asp-route-id="@item.BookingId" method="get" style="display:inline;">
+                        <button type="submit" class="btn btn-danger">Delete</button>
+                    </form>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

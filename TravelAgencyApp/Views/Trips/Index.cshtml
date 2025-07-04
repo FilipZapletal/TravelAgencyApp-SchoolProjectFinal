@@ -1,0 +1,52 @@
+﻿@model IEnumerable<TravelAgencyApp.DTOs.TripDTO>
+
+
+@{
+    ViewData["Title"] = "Trips";
+}
+
+<h1>Trips</h1>
+
+<p>
+    <form asp-action="Create" method="get" style="display:inline;">
+        <button type="submit" class="btn btn-info">Create New</button>
+    </form>
+</p>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>@Html.DisplayNameFor(model => model.Name)</th>
+            <th>@Html.DisplayNameFor(model => model.Destination)</th>
+            <th>@Html.DisplayNameFor(model => model.StartDate)</th>
+            <th>@Html.DisplayNameFor(model => model.EndDate)</th>
+            <th>@Html.DisplayNameFor(model => model.Price)</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@Html.DisplayFor(modelItem => item.Name)</td>
+                <td>@Html.DisplayFor(modelItem => item.Destination)</td>
+                <td>@Html.DisplayFor(modelItem => item.StartDate)</td>
+                <td>@Html.DisplayFor(modelItem => item.EndDate)</td>
+                <td>@Html.DisplayFor(modelItem => item.Price)</td>
+                <td>
+                    <form asp-action="Edit" asp-route-id="@item.TripId" method="get" style="display:inline;">
+                        <button type="submit" class="btn btn-warning">Edit</button>
+                    </form>
+
+                    <form asp-action="Details" asp-route-id="@item.TripId" method="get" style="display:inline;">
+                        <button type="submit" class="btn btn-info">Details</button>
+                    </form>
+
+                    <form asp-action="Delete" asp-route-id="@item.TripId" method="get" style="display:inline;">
+                        <button type="submit" class="btn btn-danger">Delete</button>
+                    </form>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
