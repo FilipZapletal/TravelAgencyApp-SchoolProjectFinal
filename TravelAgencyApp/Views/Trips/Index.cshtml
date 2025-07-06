@@ -9,11 +9,12 @@
 
 <p>
     <form asp-action="Create" method="get" style="display:inline;">
-        <button type="submit" class="btn btn-info">Create New</button>
+        <button type="submit" class="btn btn-info btn-sm">Create New</button>
     </form>
 </p>
 
-<table class="table">
+<table class="table table-striped table-hover table-bordered shadow-sm rounded">
+
     <thead>
         <tr>
             <th>@Html.DisplayNameFor(model => model.Name)</th>
@@ -35,15 +36,15 @@
                 <td>@Html.DisplayFor(modelItem => item.Price)</td>
                 <td>
                     <form asp-action="Edit" asp-route-id="@item.TripId" method="get" style="display:inline;">
-                        <button type="submit" class="btn btn-warning">Edit</button>
+                        <button type="submit" class="btn btn-warning btn-sm">Edit</button>
                     </form>
 
                     <form asp-action="Details" asp-route-id="@item.TripId" method="get" style="display:inline;">
-                        <button type="submit" class="btn btn-info">Details</button>
+                        <button type="submit" class="btn btn-info btn-sm">Details</button>
                     </form>
 
                     <form asp-action="Delete" asp-route-id="@item.TripId" method="get" style="display:inline;">
-                        <button type="submit" class="btn btn-danger">Delete</button>
+                        <button type="submit" class="btn btn-danger btn-sm">Delete</button>
                     </form>
                 </td>
             </tr>
