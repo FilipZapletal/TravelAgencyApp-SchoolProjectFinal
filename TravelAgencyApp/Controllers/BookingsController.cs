@@ -6,7 +6,7 @@ using TravelAgencyApp.Services;
 
 namespace TravelAgencyApp.Controllers
 {
-    [Authorize(Roles = "Admin,Worker")]
+    [Authorize]
     public class BookingsController : Controller
     {
         private readonly BookingService _bookingService;
@@ -34,7 +34,7 @@ namespace TravelAgencyApp.Controllers
             return View(booking);
         }
 
-        [Authorize(Roles = "Admin, Worker")]
+        [Authorize(Roles = "Admin,Worker,User")]
         public async Task<IActionResult> Create()
         {
             var trips = await _tripService.GetAllAsync();
@@ -48,7 +48,7 @@ namespace TravelAgencyApp.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Authorize(Roles = "Admin,Worker")]
+        [Authorize(Roles = "Admin,Worker,User")]
         public async Task<IActionResult> Create(BookingDTO dto)
         {
             if (!ModelState.IsValid)
