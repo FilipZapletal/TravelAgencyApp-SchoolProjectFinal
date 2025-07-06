@@ -1,4 +1,6 @@
-﻿namespace TravelAgencyApp.DTOs
+﻿using TravelAgencyApp.Models;
+
+namespace TravelAgencyApp.DTOs
 {
     public class BookingDTO
     {
@@ -10,5 +12,6 @@
 
         public string TripName { get; set; } = string.Empty;
         public string CustomerName { get; set; } = string.Empty;
+        public BookingStatus Status { get; set; }
     }
 }

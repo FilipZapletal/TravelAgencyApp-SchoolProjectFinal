@@ -19,6 +19,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Logging;
 using TravelAgencyApp.Models;
+using TravelAgencyApp.Data;
 
 namespace TravelAgencyApp.Areas.Identity.Pages.Account
 {
@@ -118,33 +119,63 @@ namespace TravelAgencyApp.Areas.Identity.Pages.Account
                 await _userStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);
                 await _emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);
                 var result = await _userManager.CreateAsync(user, Input.Password);
-
                 if (result.Succeeded)
                 {
-                    _logger.LogInformation("User created a new account with password.");
-
-                    var userId = await _userManager.GetUserIdAsync(user);
+                    // ✅ Automatically confirm the email
                     var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-                    code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
-                    var callbackUrl = Url.Page(
-                        "/Account/ConfirmEmail",
-                        pageHandler: null,
-                        values: new { area = "Identity", userId = userId, code = code, returnUrl = returnUrl },
-                        protocol: Request.Scheme);
+                    await _userManager.ConfirmEmailAsync(user, code);
 
-                    await _emailSender.SendEmailAsync(Input.Email, "Confirm your email",
-                        $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
+                    // ✅ Assign "User" role
+                    await _userManager.AddToRoleAsync(user, "User");
 
-                    if (_userManager.Options.SignIn.RequireConfirmedAccount)
+                    // ✅ Sign in the user
+                    await _signInManager.SignInAsync(user, isPersistent: false);
+
+                    // ✅ Create matching Customer entity in your database
+                    using (var scope = HttpContext.RequestServices.CreateScope())
                     {
-                        return RedirectToPage("RegisterConfirmation", new { email = Input.Email, returnUrl = returnUrl });
+                        var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+
+                        var newCustomer = new Customer
+                        {
+                            FullName = user.Email, // or ask for real name during registration
+                            Email = user.Email
+                        };
+
+                        db.Customers.Add(newCustomer);
+                        await db.SaveChangesAsync();
                     }
-                    else
-                    {
-                        await _signInManager.SignInAsync(user, isPersistent: false);
-                        return LocalRedirect(returnUrl);
-                    }
+
+                    return LocalRedirect(returnUrl ?? "/");
                 }
+
+
+                //if (result.Succeeded)
+                //{
+                //    _logger.LogInformation("User created a new account with password.");
+
+                //    var userId = await _userManager.GetUserIdAsync(user);
+                //    var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+                //    code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
+                //    var callbackUrl = Url.Page(
+                //        "/Account/ConfirmEmail",
+                //        pageHandler: null,
+                //        values: new { area = "Identity", userId = userId, code = code, returnUrl = returnUrl },
+                //        protocol: Request.Scheme);
+
+                //    await _emailSender.SendEmailAsync(Input.Email, "Confirm your email",
+                //        $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
+
+                //if (_userManager.Options.SignIn.RequireConfirmedAccount)
+                //{
+                //    return RedirectToPage("RegisterConfirmation", new { email = Input.Email, returnUrl = returnUrl });
+                //}
+                //else
+                //{
+                //    await _signInManager.SignInAsync(user, isPersistent: false);
+                //    return LocalRedirect(returnUrl);
+                //}
+                //}
                 foreach (var error in result.Errors)
                 {
                     ModelState.AddModelError(string.Empty, error.Description);

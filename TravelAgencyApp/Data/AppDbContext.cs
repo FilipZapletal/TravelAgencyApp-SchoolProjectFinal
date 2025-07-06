@@ -14,7 +14,16 @@ namespace TravelAgencyApp.Data
         public DbSet<Customer> Customers { get; set; }
         public DbSet<Booking> Bookings { get; set; }
 
-    
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+
+            modelBuilder
+                .Entity<Booking>()
+                .Property(b => b.Status)
+                .HasConversion<string>(); // 🔥 This stores enum as string in DB
+        }
+
     }
 }
 

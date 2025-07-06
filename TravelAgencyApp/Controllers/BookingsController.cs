@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using TravelAgencyApp.DTOs;
+using TravelAgencyApp.Models;
 using TravelAgencyApp.Services;
 
 namespace TravelAgencyApp.Controllers
@@ -38,33 +39,48 @@ namespace TravelAgencyApp.Controllers
         public async Task<IActionResult> Create()
         {
             var trips = await _tripService.GetAllAsync();
-            var customers = await _customerService.GetAllAsync();
-
             ViewBag.Trips = new SelectList(trips, "TripId", "Name");
-            ViewBag.Customers = new SelectList(customers, "CustomerId", "FullName");
 
             return View();
         }
+
+
 
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Admin,Worker,User")]
         public async Task<IActionResult> Create(BookingDTO dto)
         {
+            // 🔍 Get current user's email
+            var userEmail = User.Identity?.Name;
+
+            // 🧠 Find corresponding customer from email
+            var customers = await _customerService.GetAllAsync();
+            var currentCustomer = customers.FirstOrDefault(c => c.Email == userEmail);
+
+            if (currentCustomer == null)
+            {
+                // ❌ Something went wrong, no customer matched
+                ModelState.AddModelError("", "No associated customer found.");
+                var trips = await _tripService.GetAllAsync();
+                ViewBag.Trips = new SelectList(trips, "TripId", "Name");
+                return View(dto);
+            }
+
+            // 💥 Inject the real customer ID into the DTO
+            dto.CustomerId = currentCustomer.CustomerId;
+
             if (!ModelState.IsValid)
             {
                 var trips = await _tripService.GetAllAsync();
-                var customers = await _customerService.GetAllAsync();
-
                 ViewBag.Trips = new SelectList(trips, "TripId", "Name");
-                ViewBag.Customers = new SelectList(customers, "CustomerId", "FullName");
-
                 return View(dto);
             }
 
             await _bookingService.CreateAsync(dto);
             return RedirectToAction(nameof(Index));
         }
+
 
         [Authorize(Roles = "Admin,Worker")]
         public async Task<IActionResult> Edit(int id)
@@ -120,5 +136,22 @@ namespace TravelAgencyApp.Controllers
             await _bookingService.DeleteAsync(id);
             return RedirectToAction(nameof(Index));
         }
+
+        [Authorize(Roles = "Admin,Worker")]
+        [HttpPost]
+        public async Task<IActionResult> Approve(int id)
+        {
+            await _bookingService.ChangeStatusAsync(id, BookingStatus.Approved);
+            return RedirectToAction(nameof(Index));
+        }
+
+        [Authorize(Roles = "Admin,Worker")]
+        [HttpPost]
+        public async Task<IActionResult> Reject(int id)
+        {
+            await _bookingService.ChangeStatusAsync(id, BookingStatus.Rejected);
+            return RedirectToAction(nameof(Index));
+        }
+
     }
 }

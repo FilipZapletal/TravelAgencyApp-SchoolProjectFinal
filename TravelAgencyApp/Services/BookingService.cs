@@ -26,7 +26,8 @@ namespace TravelAgencyApp.Services
                     CustomerId = b.CustomerId,
                     TripId = b.TripId,
                     TripName = b.Trip != null ? b.Trip.Name : "Unknown Trip",
-                    CustomerName = b.Customer != null ? b.Customer.FullName : "Unknown Customer"
+                    CustomerName = b.Customer != null ? b.Customer.FullName : "Unknown Customer",
+                    Status = b.Status
                 })
                 .ToListAsync();
         }
@@ -84,10 +85,20 @@ namespace TravelAgencyApp.Services
         }
 
         public async Task<List<Trip>> GetAllTripsAsync() =>
-    await _context.Trips.ToListAsync();
+            await _context.Trips.ToListAsync();
 
         public async Task<List<Customer>> GetAllCustomersAsync() =>
             await _context.Customers.ToListAsync();
+
+        public async Task ChangeStatusAsync(int bookingId, BookingStatus status)
+        {
+            var booking = await _context.Bookings.FindAsync(bookingId);
+            if (booking != null)
+            {
+                booking.Status = status;
+                await _context.SaveChangesAsync();
+            }
+        }
 
     }
 }

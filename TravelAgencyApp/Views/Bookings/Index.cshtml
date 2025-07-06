@@ -18,7 +18,8 @@
             <th>@Html.DisplayNameFor(model => model.BookingDate)</th>
             <th>Trip</th>
             <th>Customer</th>
-            <th></th>
+            <th>Status</th>
+            <th>Actions</th>
         </tr>
     </thead>
     <tbody>
@@ -28,6 +29,7 @@
                 <td>@item.BookingDate.ToString("yyyy-MM-dd")</td>
                 <td>@item.TripName</td>
                 <td>@item.CustomerName</td>
+                <td>@item.Status</td>
                 <td>
                     <form asp-action="Edit" asp-route-id="@item.BookingId" method="get" style="display:inline;">
                         <button type="submit" class="btn btn-warning">Edit</button>
@@ -38,6 +40,17 @@
                     <form asp-action="Delete" asp-route-id="@item.BookingId" method="get" style="display:inline;">
                         <button type="submit" class="btn btn-danger">Delete</button>
                     </form>
+
+                    @if (User.IsInRole("Admin") || User.IsInRole("Worker"))
+                    {
+                        <span> | </span>
+                        <form asp-action="Approve" asp-route-id="@item.BookingId" method="post" style="display:inline;">
+                            <button type="submit" class="btn btn-success btn-sm">Approve</button>
+                        </form>
+                        <form asp-action="Reject" asp-route-id="@item.BookingId" method="post" style="display:inline;">
+                            <button type="submit" class="btn btn-danger btn-sm">Reject</button>
+                        </form>
+                    }
                 </td>
             </tr>
         }
