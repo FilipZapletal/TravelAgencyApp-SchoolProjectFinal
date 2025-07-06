@@ -11,6 +11,12 @@ var builder = WebApplication.CreateBuilder(args);
 //    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("MonsterDbConnection")));
+
+// Load optional production secrets
+builder.Configuration
+    .AddJsonFile("appsettings.Production.json", optional: true)
+    .AddEnvironmentVariables();
+
 builder.Services.AddDefaultIdentity<ApplicationUser>(options =>
 {
     options.SignIn.RequireConfirmedAccount = false;
